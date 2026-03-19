@@ -1,4 +1,4 @@
-import { Activity, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -22,9 +22,11 @@ export default function Navbar() {
             <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
                 {/* Logo */}
                 <div className="flex items-center gap-2 cursor-pointer group">
-                    <div className="relative flex items-center justify-center p-2 rounded-lg bg-neon-blue/10 border border-neon-blue/30 group-hover:neon-border transition-all duration-300">
-                        <Activity className="w-6 h-6 text-neon-blue animate-pulse-slow" />
-                    </div>
+                    <img
+                        src="/logo.png"
+                        alt="VisionAIoT Logo"
+                        className="w-9 h-9 object-contain drop-shadow-[0_0_8px_rgba(0,240,255,0.6)] group-hover:drop-shadow-[0_0_14px_rgba(0,240,255,0.9)] transition-all duration-300"
+                    />
                     <span className="text-xl font-bold tracking-tight text-white group-hover:text-glow transition-all">
                         Vision<span className="text-neon-blue">AIoT</span>
                     </span>

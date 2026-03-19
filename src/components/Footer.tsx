@@ -1,4 +1,4 @@
-import { Activity, Github, Twitter, Linkedin } from 'lucide-react';
+import { Github, Twitter, Linkedin } from 'lucide-react';
 
 export default function Footer() {
     return (
@@ -7,9 +7,11 @@ export default function Footer() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
                     <div className="col-span-2 md:col-span-1">
                         <div className="flex items-center gap-2 mb-4 group cursor-pointer">
-                            <div className="p-1.5 rounded-lg bg-neon-blue/10 border border-neon-blue/30 group-hover:neon-border transition-all">
-                                <Activity className="w-5 h-5 text-neon-blue" />
-                            </div>
+                            <img
+                                src="/logo.png"
+                                alt="VisionAIoT Logo"
+                                className="w-8 h-8 object-contain drop-shadow-[0_0_6px_rgba(0,240,255,0.5)] group-hover:drop-shadow-[0_0_12px_rgba(0,240,255,0.8)] transition-all"
+                            />
                             <span className="text-lg font-bold tracking-tight text-white group-hover:text-glow transition-all">
                                 Vision<span className="text-neon-blue">AIoT</span>
                             </span>

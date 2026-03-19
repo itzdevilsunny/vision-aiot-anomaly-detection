@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-    Camera, AlertTriangle, Activity, Shield, Database,
+    AlertTriangle, Activity, Shield, Database,
     LayoutDashboard, Video, Settings, Search, Menu, X,
     MapPin, Server as ServerIcon, ChevronLeft, ChevronRight
 } from 'lucide-react';
@@ -52,9 +52,11 @@ export default function DashboardLayout() {
                 }`}>
                 <div className="h-16 flex items-center px-6 border-b border-slate-800 shrink-0">
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
-                            <Camera className="w-5 h-5 text-white" />
-                        </div>
+                        <img
+                            src="/logo.png"
+                            alt="VisionAIoT Logo"
+                            className="w-9 h-9 object-contain drop-shadow-[0_0_8px_rgba(59,130,246,0.7)]"
+                        />
                         <span className="text-xl font-bold tracking-tight text-white">Vision<span className="text-blue-500">AIoT</span></span>
                     </div>
                 </div>
