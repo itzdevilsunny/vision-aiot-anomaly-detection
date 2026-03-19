@@ -184,226 +184,149 @@ export default function CommandCenter() {
     };
 
     return (
-        <div className="p-6 bg-[#0B0F19] min-h-screen text-white overflow-y-auto overflow-x-hidden">
-
-            {/* Header & Quick Actions */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-                <div>
-                    <div className="flex items-center gap-2 mb-1">
-                        <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                        <span className="text-xs font-bold tracking-widest text-green-500 uppercase">Live System Status</span>
-                    </div>
-                    <h1 className="text-4xl font-extrabold tracking-tight">Command Center</h1>
-                    <p className="text-gray-400 mt-1">Real-time edge inference and anomaly detection overview.</p>
-                </div>
-
-                <div className="flex gap-3 mt-4 md:mt-0 relative z-10">
-                    <button 
-                         onClick={handleGenerateReport} 
-                         disabled={isGenerating}
-                         className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 border border-gray-700 rounded-lg text-sm font-semibold transition"
-                    >
-                        {isGenerating ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <FileText size={16} />} 
-                        {isGenerating ? 'Generating...' : 'Generate Report'}
+        <div className="w-full flex-1 h-full min-h-full font-body">
+            {/* Navigation Controls & Context */}
+            <div className="flex flex-col items-center mb-10 pt-4">
+                <div className="glass-panel rounded-full px-2 py-2 flex items-center gap-2 mb-6">
+                    <button onClick={handleBackCamera} className="w-10 h-10 rounded-full flex items-center justify-center bg-surface-container-low text-slate-400 hover:text-primary transition-colors cursor-pointer">
+                        <span className="material-symbols-outlined">chevron_left</span>
                     </button>
-                    <button 
-                         onClick={() => setIsAddNodeModalOpen(true)}
-                         className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-semibold shadow-[0_0_15px_rgba(37,99,235,0.4)] transition"
-                    >
-                        <Plus size={16} /> Add Camera Node
+                    <div className="px-6 py-1 bg-surface-container-highest rounded-full border border-outline-variant/20">
+                        <span className="text-xs font-bold tracking-widest text-primary-fixed uppercase">{activeCamera.name}</span>
+                    </div>
+                    <button onClick={handleNextCamera} className="w-10 h-10 rounded-full flex items-center justify-center bg-surface-container-low text-slate-400 hover:text-primary transition-colors cursor-pointer">
+                        <span className="material-symbols-outlined">chevron_right</span>
                     </button>
                 </div>
+                <h2 className="text-3xl sm:text-5xl font-headline font-bold tracking-tighter text-white text-center">System Overview</h2>
+                <p className="text-slate-400 font-body mt-2 text-center max-w-lg text-sm sm:text-base">AI-driven environmental analysis across all active edge nodes. Current network latency: {avgLatency.toFixed(0)}ms.</p>
             </div>
 
-            {/* KPI Cards with Live Sparklines */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
-                {/* Active Nodes */}
-                <div className="bg-[#151923] p-5 rounded-xl border border-gray-800 flex flex-col justify-between h-32">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-500/10 rounded-lg"><Server size={18} className="text-blue-400" /></div>
-                        <span className="text-sm text-gray-400 font-medium">Active Edge Nodes</span>
+            {/* Bento Grid Layout */}
+            <div className="grid grid-cols-12 gap-6 max-w-7xl mx-auto pb-20">
+                {/* Main Featured Card (Centered Focus) */}
+                <div className="col-span-12 lg:col-span-8 h-[450px] relative rounded-2xl overflow-hidden bg-surface-container-highest primary-glow group">
+                    <div className="absolute inset-0 z-0 bg-black">
+                        <LiveInferenceFeed streamUrl={activeCamera.streamUrl} cameraId={activeCamera.id} />
                     </div>
-                    <div className="flex items-end justify-between">
-                        <div>
-                            <h2 className="text-3xl font-bold">{activeNodes}/{totalNodes}</h2>
-                            <p className="text-xs text-green-400 font-bold flex items-center gap-1 mt-1">↑ UP <span className="text-gray-500 font-normal">{Math.round((activeNodes / totalNodes) * 100) || 0}% Operational</span></p>
+                    <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/40 to-transparent z-10 pointer-events-none"></div>
+                    
+                    <div className="absolute top-6 left-6 flex gap-3 z-20 pointer-events-none">
+                        <div className="px-3 py-1 bg-secondary/10 border border-secondary/20 rounded-full flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-secondary pulse-secondary"></div>
+                            <span className="text-[10px] font-bold text-secondary uppercase tracking-wider">Live Feed: {activeCamera.id}</span>
                         </div>
+                        <div className="px-3 py-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-full">
+                            <span className="text-[10px] font-bold text-white uppercase tracking-wider">{activeCamera.fps} FPS</span>
+                        </div>
+                    </div>
+                    
+                    <div className="absolute bottom-8 left-8 right-8 flex justify-between items-end z-20 pointer-events-none">
+                        <div>
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className="material-symbols-outlined text-tertiary text-sm">emergency</span>
+                                <span className="text-xs font-bold text-tertiary-fixed-dim uppercase tracking-widest">Anomaly Detection Enabled</span>
+                            </div>
+                            <h3 className="text-2xl sm:text-3xl font-headline font-bold text-white">Central Operations Hub</h3>
+                            <p className="text-slate-300 mt-2 max-w-md text-sm">Real-time telemetry from {activeNodes} sensors. AI Confidence: 99.4%</p>
+                        </div>
+                        <button onClick={() => setIsAddNodeModalOpen(true)} className="pointer-events-auto bg-gradient-to-br from-primary to-primary-container px-4 py-2 sm:px-6 sm:py-3 rounded-xl font-bold text-on-primary-fixed flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-105 transition-transform active:scale-95 cursor-pointer">
+                            <span className="hidden sm:inline">Add Node</span>
+                            <span className="material-symbols-outlined text-sm">add</span>
+                        </button>
                     </div>
                 </div>
 
-                {/* Total Anomalies */}
-                <div className="bg-[#151923] p-5 rounded-xl border border-gray-800 flex flex-col justify-between h-32 relative overflow-hidden">
-                    <div className="flex items-center gap-3 relative z-10">
-                        <div className="p-2 bg-red-500/10 rounded-lg"><AlertTriangle size={18} className="text-red-400" /></div>
-                        <span className="text-sm text-gray-400 font-medium">Total Anomalies (24h)</span>
-                    </div>
-                    <div className="flex items-end justify-between relative z-10">
-                        <div>
-                            <h2 className="text-3xl font-bold">{totalAnomaliesLive}</h2>
-                            <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">→ LIVE <span className="text-gray-500">Critical: {criticalAnomaliesLive}</span></p>
+                {/* Secondary Data Stack */}
+                <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
+                    {/* Status Card */}
+                    <div className="flex-1 glass-panel rounded-2xl p-6 flex flex-col justify-between">
+                        <div className="flex justify-between items-start">
+                            <div className="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center">
+                                <span className="material-symbols-outlined text-primary">memory</span>
+                            </div>
+                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">System Health</span>
+                        </div>
+                        <div className="mt-4">
+                            <div className="flex justify-between items-end mb-2">
+                                <span className="text-4xl font-headline font-bold text-white">{healthPercent}%</span>
+                                <span className={`text-xs font-bold flex items-center gap-1 ${healthPercent >= 90 ? 'text-secondary' : 'text-tertiary'}`}>
+                                    <span className="material-symbols-outlined text-xs">{healthPercent >= 90 ? 'trending_up' : 'trending_down'}</span>
+                                    {healthPercent >= 90 ? 'Stable' : 'Warning'}
+                                </span>
+                            </div>
+                            <div className="w-full h-1 bg-surface-container-low rounded-full overflow-hidden">
+                                <div className={`h-full rounded-full ${healthPercent >= 90 ? 'bg-primary' : 'bg-tertiary'}`} style={{ width: `${healthPercent}%` }}></div>
+                            </div>
                         </div>
                     </div>
-                    {/* Sparkline Background */}
-                    <div className="absolute bottom-0 right-0 w-1/2 h-16 opacity-30">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={stats?.anomalyTrend || []}>
-                                <Line type="monotone" dataKey="value" stroke="#EF4444" strokeWidth={2} dot={false} />
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
 
-                {/* Avg Inference Time */}
-                <div className="bg-[#151923] p-5 rounded-xl border border-gray-800 flex flex-col justify-between h-32 relative overflow-hidden">
-                    <div className="flex items-center gap-3 relative z-10">
-                        <div className="p-2 bg-purple-500/10 rounded-lg"><Zap size={18} className="text-purple-400" /></div>
-                        <span className="text-sm text-gray-400 font-medium">Avg Inference Time</span>
-                    </div>
-                    <div className="flex items-end justify-between relative z-10">
-                        <div>
-                            <h2 className="text-3xl font-bold">{avgLatency.toFixed(1)}ms</h2>
-                            <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">→ LIVE <span className="text-gray-500">Using TensorRT ONNX</span></p>
+                    {/* AI Alert Card */}
+                    <div className="flex-1 bg-surface-container-highest rounded-2xl p-6 border border-tertiary/10 relative overflow-hidden">
+                        <div className="absolute -right-4 -top-4 w-24 h-24 bg-tertiary/5 blur-3xl rounded-full"></div>
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-8 h-8 rounded-lg bg-tertiary/20 flex items-center justify-center">
+                                <span className="material-symbols-outlined text-tertiary text-sm">notifications_active</span>
+                            </div>
+                            <span className="text-xs font-bold text-white uppercase tracking-widest">Recent Alert</span>
                         </div>
-                    </div>
-                    <div className="absolute bottom-0 right-0 w-1/2 h-16 opacity-30">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={latencyTrend}>
-                                <YAxis domain={['dataMin - 2', 'dataMax + 2']} hide />
-                                <Line type="stepAfter" dataKey="value" stroke="#A855F7" strokeWidth={2} dot={false} />
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
-
-                {/* System Health */}
-                <div className="bg-[#151923] p-5 rounded-xl border border-gray-800 flex flex-col justify-between h-32">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-green-500/10 rounded-lg"><CheckCircle size={18} className="text-green-400" /></div>
-                        <span className="text-sm text-gray-400 font-medium">System Health</span>
-                    </div>
-                    <div className="flex items-end justify-between">
-                        <div>
-                            <h2 className="text-3xl font-bold">{healthPercent}%</h2>
-                            <p className="text-xs text-green-400 font-bold flex items-center gap-1 mt-1">↑ UP <span className="text-gray-500 font-normal">All services operational</span></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Main Grid: Video Feed & Alerts */}
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-
-                {/* Left Column: Video & Terminal */}
-                <div className="xl:col-span-2 flex flex-col gap-6">
-
-                    {/* Live Edge Inference Widget */}
-                    <div className="bg-[#151923] rounded-xl border border-gray-800 shadow-xl overflow-hidden flex flex-col h-[500px]">
-                        <div className="p-3 border-b border-gray-800 flex justify-between items-center bg-[#1A1D27]">
-                            <h3 className="font-bold flex items-center gap-2">
-                                <Activity size={18} className="text-blue-500" /> Live Edge Inference: {activeCamera.name}
-                                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-500/20 text-red-500 uppercase tracking-wider ml-2">Rec</span>
-                            </h3>
-                            <div className="flex gap-2 items-center">
-                                <div className="flex bg-gray-900 rounded-lg overflow-hidden border border-gray-700 mr-2">
-                                    <button onClick={handleBackCamera} className="px-3 py-1 text-xs hover:bg-gray-700 transition font-bold text-gray-300">BACK</button>
-                                    <div className="w-px bg-gray-700"></div>
-                                    <button onClick={handleNextCamera} className="px-3 py-1 text-xs hover:bg-gray-700 transition font-bold text-gray-300">NEXT</button>
+                        
+                        {activeAlerts.length > 0 ? (
+                            <>
+                                <p className="text-sm font-medium text-on-surface line-clamp-2 uppercase">{activeAlerts[0].type.replace('_', ' ')} detected at {activeAlerts[0].camera_id}.</p>
+                                <p className="text-[10px] text-slate-500 mt-2">{new Date(activeAlerts[0].timestamp).toLocaleTimeString()} • Confidence: {(activeAlerts[0].confidence * 100).toFixed(1)}%</p>
+                                <div className="mt-4 flex gap-2 relative z-10">
+                                    <button className="flex-1 py-2 rounded-lg bg-tertiary/10 text-tertiary text-[10px] font-bold uppercase hover:bg-tertiary/20 transition-colors cursor-pointer">Dismiss</button>
+                                    <button className="flex-1 py-2 rounded-lg bg-tertiary text-on-tertiary text-[10px] font-bold uppercase hover:opacity-90 transition-opacity cursor-pointer">Intervene</button>
                                 </div>
-                                <span className="bg-gray-800 px-2 py-1 rounded text-xs font-mono text-gray-400 border border-gray-700">{activeCamera.id}</span>
-                                <span className="bg-gray-800 px-2 py-1 rounded text-xs font-mono text-gray-400 border border-gray-700">{activeCamera.fps} FPS</span>
-                            </div>
-                        </div>
-                        <div className="flex-grow bg-black relative">
-                            <LiveInferenceFeed streamUrl={activeCamera.streamUrl} cameraId={activeCamera.id} />
-                        </div>
-                    </div>
-
-                    {/* NEW FEATURE: Live System Terminal */}
-                    <div className="bg-[#151923] rounded-xl border border-gray-800 shadow-xl overflow-hidden h-48 flex flex-col">
-                        <div className="p-2 px-4 border-b border-gray-800 bg-[#1A1D27] flex items-center gap-2">
-                            <Terminal size={14} className="text-gray-400" />
-                            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">System Event Log</span>
-                        </div>
-                        <div className="p-4 font-mono text-xs overflow-y-auto flex-grow bg-[#0B0F19]">
-                            {systemLogs.length === 0 ? (
-                                <span className="text-gray-600">Awaiting system telemetry...</span>
-                            ) : (
-                                systemLogs.map((log, i) => (
-                                    <div key={i} className="mb-1">
-                                        <span className="text-gray-500">[{log.time}]</span>{' '}
-                                        <span className={log.type === 'error' ? 'text-red-400' : log.type === 'warn' ? 'text-yellow-400' : 'text-green-400'}>
-                                            [{log.type.toUpperCase()}]
-                                        </span>{' '}
-                                        <span className="text-gray-300">{log.msg}</span>
-                                    </div>
-                                ))
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Anomaly Trend Chart */}
-                    <AnomalyTrendChart />
-                </div>
-
-                {/* Right Column: Priority Alerts */}
-                <div className="bg-[#151923] rounded-xl border border-gray-800 shadow-xl flex flex-col h-[716px]">
-                    <div className="p-4 border-b border-gray-800 bg-[#1A1D27]">
-                        <div className="flex justify-between items-center mb-3">
-                            <h3 className="font-bold flex items-center gap-2">
-                                <AlertTriangle size={18} className="text-red-500" /> Priority Alerts
-                            </h3>
-                            <span className="text-xs text-gray-500">{activeAlerts.length} active</span>
-                        </div>
-                        <div className="relative">
-                            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
-                            <input
-                                type="text"
-                                placeholder="Search alerts (CAM-01, Unauthorized...)"
-                                value={alertSearchQuery}
-                                onChange={(e) => setAlertSearchQuery(e.target.value)}
-                                className="w-full bg-[#0d0e12] border border-gray-700 rounded-lg pl-9 pr-3 py-2 text-xs text-white placeholder-gray-600 outline-none focus:border-blue-500 transition"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="p-4 space-y-3 overflow-y-auto flex-grow custom-scrollbar">
-                        {activeAlerts.length === 0 ? (
-                            <div className="h-full flex flex-col items-center justify-center text-gray-500 opacity-60">
-                                <Shield size={48} className="mb-4" />
-                                <p className="text-sm">No active priority alerts.</p>
-                                <p className="text-xs mt-1">System monitoring all zones.</p>
-                            </div>
+                            </>
                         ) : (
-                            activeAlerts.map(alert => (
-                                <motion.div
-                                    initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
-                                    key={alert.id}
-                                    className={`p-4 rounded-xl border ${alert.severity === 'Critical' ? 'bg-red-900/10 border-red-900/50' : 'bg-yellow-900/10 border-yellow-900/50'} flex gap-3`}
-                                >
-                                    <div className="mt-0.5">
-                                        <AlertTriangle size={16} className={alert.severity === 'Critical' ? 'text-red-500' : 'text-yellow-500'} />
-                                    </div>
-                                    <div className="flex-grow">
-                                        <p className={`text-sm font-bold uppercase tracking-wide ${alert.severity === 'Critical' ? 'text-red-400' : 'text-yellow-400'}`}>
-                                            {alert.type.replace('_', ' ')}
-                                        </p>
-                                        <div className="flex justify-between items-center mt-2">
-                                            <p className="text-xs text-gray-400 flex items-center gap-1">
-                                                <MapPin size={12} /> {alert.camera_id}
-                                            </p>
-                                            <p className="text-xs text-gray-500">{new Date(alert.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                                        </div>
-                                        <div className="mt-3 w-full bg-gray-900 h-1.5 rounded-full overflow-hidden">
-                                            <div className={`h-full ${alert.severity === 'Critical' ? 'bg-red-500' : 'bg-yellow-500'}`} style={{ width: `${alert.confidence * 100}%` }}></div>
-                                        </div>
-                                        <p className="text-right text-[10px] text-gray-500 mt-1 font-mono">CONF: {(alert.confidence * 100).toFixed(2)}%</p>
-                                    </div>
-                                </motion.div>
-                            ))
+                            <div className="h-full flex flex-col justify-center">
+                                <p className="text-sm font-medium text-slate-400">No active priority alerts.</p>
+                                <p className="text-[10px] text-slate-500 mt-1">System monitoring all zones.</p>
+                            </div>
                         )}
                     </div>
                 </div>
 
+                {/* Bottom Metrics */}
+                <div className="col-span-12 md:col-span-4 glass-panel rounded-2xl p-6 flex flex-col justify-between">
+                    <div>
+                        <div className="flex items-center gap-4 mb-4">
+                            <span className="material-symbols-outlined text-slate-500">database</span>
+                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Total Anomalies</h4>
+                        </div>
+                        <p className="text-2xl font-headline font-bold text-white">{totalAnomaliesLive}</p>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">Found in last 24h</p>
+                </div>
+
+                <div className="col-span-12 md:col-span-4 glass-panel rounded-2xl p-6 flex flex-col justify-between">
+                    <div>
+                        <div className="flex items-center gap-4 mb-4">
+                            <span className="material-symbols-outlined text-slate-500">warning</span>
+                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Critical Alerts</h4>
+                        </div>
+                        <p className="text-2xl font-headline font-bold text-tertiary-fixed-dim">{criticalAnomaliesLive}</p>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">Requires immediate attention</p>
+                </div>
+
+                <div className="col-span-12 md:col-span-4 glass-panel rounded-2xl p-6 flex flex-col justify-between">
+                    <div>
+                        <div className="flex items-center gap-4 mb-4">
+                            <span className="material-symbols-outlined text-slate-500">group</span>
+                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Active Operators</h4>
+                        </div>
+                        <div className="flex -space-x-2">
+                            <img alt="User 1" className="w-8 h-8 rounded-full border-2 border-surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgLc2jz0QXYjMFdKMDSk-ZTgzsCw0koUYmEmMdK1y46EE6RbqCnD2EPL7YmxgXjrH0cOSQC7zWntFusWmKA9Aej0E1HRArzRtsSjkSaiYY2EXiGuilWX3kgYmg_CnT4_XaNigkqAkVefYHdVskeydJBf0bGfBYUAl_vjJD0r-aTEjeSrWMSZPSwSvSsXUuTP8LyVWCFpBqqeGq566I4yu3hXlNJJ55eLn9YEpGL_cA8W87fT0-AfS_A2DT-wrjZLsAjEdG3EYeW70"/>
+                            <img alt="User 2" className="w-8 h-8 rounded-full border-2 border-surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA64JTYDDvz3R6p7_D_jCvMJvypEkwNuQupXWRRj4T-8zQKTUQZrJYmRXWWUb_qtrQ5R6qD7-HDHMfRSSQFtmGPcFpvaH2fBgJdl278RJB9ZIxv_hgU9dvPcSnhuJTCjU_Eny9UaKj-pwFmfogXCOzSHG2yP7R5q23kqLw6MgUdeJqkUk0GZFjcNAtGQP-Qim08bU6oFsOltbrXjFvqL82DuC5YxguJvBZbieKRt4PJNobVmirwVlBoItjOiv5YOnJjLrrgIQojzjw"/>
+                            <img alt="User 3" className="w-8 h-8 rounded-full border-2 border-surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoWSp4Y5kXKyBvYGTyELyJDiCS_H0u7UaCv0NtqKSGlQv7hngi8VtOx8_xRoKz35bQ139RXN-4WWsfniCtfvXaCMA9IOAbLHJKwlXaM8xcKtJPrQUhPGGnxMqXTPAQRtcXpqcY3ErrKfyPOpGUhzxPRIAEYGYOho5joBMJwdqxwTOiq0YFjITRHLltmnbnAJAqGGiR6rN6_DNuhdCrUD9WL5guC_ZZreJRoa0e7ZGiuyBojezlpUaFxxap7iaEFMswErYRga90bXQ"/>
+                            <div className="w-8 h-8 rounded-full bg-surface-container-low border-2 border-surface flex items-center justify-center text-[10px] font-bold text-slate-400">+5</div>
+                        </div>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-3">Peak activity detected now</p>
+                </div>
             </div>
 
             <AddNodeModal 
@@ -411,16 +334,12 @@ export default function CommandCenter() {
                 onClose={() => setIsAddNodeModalOpen(false)} 
                 onAdd={(data) => {
                     console.log('Deploying node:', data);
-                    // Mock immediate feedback
                     setSystemLogs(prev => [{ time: new Date().toLocaleTimeString(), msg: `Provisioning new edge node: ${data.name}...`, type: 'info' }, ...prev].slice(0, 50));
                     setTimeout(() => {
                          setTotalNodes(prev => prev + 1);
                          setActiveNodes(prev => prev + 1);
-                         
-                         // Add new camera to navigation
                          const newCamId = `CAM-0${cameras.length + 1}`;
                          setCameras(prev => [...prev, { id: newCamId, name: data.name, streamUrl: data.ip.includes('http') ? data.ip : `http://${data.ip}`, fps: 30 }]);
-                         
                          setSystemLogs(prev => [{ time: new Date().toLocaleTimeString(), msg: `Node ${data.name} connected successfully.`, type: 'info' }, ...prev].slice(0, 50));
                     }, 1500);
                     setIsAddNodeModalOpen(false);
